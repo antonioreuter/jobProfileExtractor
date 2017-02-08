@@ -68,7 +68,3 @@ dependencies {
     testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
     testCompile group: 'org.springframework.batch', name: 'spring-batch-test', version: '3.0.7.RELEASE'
 }
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.5'
-}

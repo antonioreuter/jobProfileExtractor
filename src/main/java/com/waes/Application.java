@@ -8,6 +8,7 @@ import com.waes.util.ProcessDataArguments;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+
 /**
  * Created by antonioreuter on 02/02/17.
  */

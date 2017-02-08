@@ -6,12 +6,14 @@ import com.waes.batch.exceptions.RetrieveDetailedInfoException;
 import com.waes.batch.readers.github.dto.GithubUserResultSet;
 import com.waes.batch.models.github.JobProfile;
 import com.waes.batch.models.github.Repo;
+import com.waes.exceptions.ApiReaderException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -31,7 +33,13 @@ public class GithubSearchUsersService {
   private RestTemplate restTemplate;
 
   public List<JobProfile> search(String query) {
-    ResponseEntity<GithubUserResultSet> response = restTemplate.getForEntity(query, GithubUserResultSet.class);
+    ResponseEntity<GithubUserResultSet> response = null;
+
+    try {
+      response = restTemplate.getForEntity(query, GithubUserResultSet.class);
+    } catch (HttpClientErrorException ex) {
+      throw new ApiReaderException(ex.getResponseBodyAsString(), ex);
+    }
 
     if (response.getStatusCode() != HttpStatus.OK)
       throw new ReadProfileApiException("Wasn't possible to perform this query!");
