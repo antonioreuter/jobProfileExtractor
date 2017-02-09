@@ -31,7 +31,7 @@ public class EnrichProfileInfoProcessor implements ItemProcessor<JobProfile, Job
     return jobProfile;
   }
 
-  public void summarizeRepoInfo(JobProfile jobProfile) {
+  private void summarizeRepoInfo(JobProfile jobProfile) {
     List<Repo> repos = searchUsersService.retrieveJobProfileRepos(jobProfile);
 
     Integer totalStars = 0;
@@ -71,7 +71,7 @@ public class EnrichProfileInfoProcessor implements ItemProcessor<JobProfile, Job
     }
   }
 
-  public Set<String> retrieveProgrammingLanguages(Repo repo) {
+  private Set<String> retrieveProgrammingLanguages(Repo repo) {
     Set<String> result = null;
     Map<String, String> langs = searchUsersService.retrieveProgrammingLanguagesFromRepo(repo);
 

@@ -10,6 +10,7 @@ import com.waes.exceptions.ApiReaderException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,15 +29,20 @@ import java.util.Map;
 @Service("gitubSearchUsersService")
 public class GithubSearchUsersService {
 
+  @Value("${github.api.max_per_page}")
+  private Integer maxPerPage;
+
   @Autowired
   @Qualifier("githubRestTemplate")
   private RestTemplate restTemplate;
 
-  public List<JobProfile> search(String query) {
+  public GithubUserResultSet search(String query, Integer index) {
     ResponseEntity<GithubUserResultSet> response = null;
 
+    query += "&page={page}&per_page={per_page}";
+
     try {
-      response = restTemplate.getForEntity(query, GithubUserResultSet.class);
+      response = restTemplate.getForEntity(query, GithubUserResultSet.class, index, maxPerPage);
     } catch (HttpClientErrorException ex) {
       throw new ApiReaderException(ex.getResponseBodyAsString(), ex);
     }
@@ -44,9 +50,7 @@ public class GithubSearchUsersService {
     if (response.getStatusCode() != HttpStatus.OK)
       throw new ReadProfileApiException("Wasn't possible to perform this query!");
 
-    GithubUserResultSet resultSet = response.getBody();
-
-    return resultSet.getItems();
+    return response.getBody();
   }
 
   public JobProfile retrieveJobProfileBioInfo(JobProfile jobProfile) {

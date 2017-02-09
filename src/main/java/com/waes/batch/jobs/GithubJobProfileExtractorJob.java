@@ -33,6 +33,10 @@ import org.springframework.core.task.TaskExecutor;
 
 @Configuration
 public class GithubJobProfileExtractorJob {
+
+  @Value("${batch.threshold_skip_exception}")
+  private Integer thresholdSkipException;
+
   @Value("${batch.concurrency}")
   private Integer concurrency;
 
@@ -91,7 +95,7 @@ public class GithubJobProfileExtractorJob {
 
   @Bean(name = "jobProfileExceptionSkipper")
   public SkipPolicy jobProfileExceptionSkipper() {
-    return new JobProfileExceptionSkipper();
+    return new JobProfileExceptionSkipper(thresholdSkipException);
   }
 
   private LineAggregator<JobProfile> createGitHubJobProfileLineAggregator(String selectedFields) {
